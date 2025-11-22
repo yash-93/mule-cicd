@@ -1,0 +1,33 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- master
+- develop
+
+pool:
+  vmImage: windows-latest
+
+variables:
+  - group: MuleSoft CICD Variable Group
+
+stages:
+  - stage: DeployToCloudhHub2
+    displayName: 'Deploy to CloudHub 2.0 (Sandbox)'
+    jobs:
+      - job: DeploymentJob
+        displayName: 'Maven CloudHub 2.0 Deployment'
+        steps:
+          - checkout: self
+          - task: Maven@3
+            inputs:
+              mavenPomFile: ''
+              goals: 'deploy'
+              options: |
+                -Danypoint.username=$(anypoint.username)
+                -Danypoint.password=$(anypoint.password)
+                -Danypoint.environment=$(anypoint.environment)
+                -DappName=$(appName)
+            displayName: 'Deploy Mule App to CloudHub 2.0'
